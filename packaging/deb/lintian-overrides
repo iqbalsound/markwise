@@ -1,0 +1,5 @@
+# MarkWise is a third-party application, not part of the Debian archive.
+# It is built with PyInstaller and bundles its own Python and Qt libraries,
+# so it is installed under /opt and cannot use the system copies.
+markwise: dir-or-file-in-opt
+markwise: embedded-library

@@ -1,0 +1,107 @@
+name: Release
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+    env:
+      QT_QPA_PLATFORM: offscreen
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Tag must match APP_VERSION
+        run: |
+          V=$(python -c "import sys; sys.path.insert(0,'src'); from markwise.app_info import APP_VERSION; print(APP_VERSION)")
+          if [ "v$V" != "$GITHUB_REF_NAME" ]; then echo "Tag $GITHUB_REF_NAME does not match APP_VERSION v$V"; exit 1; fi
+      - name: Qt system libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libegl1 libgl1 libglib2.0-0 libfontconfig1 libdbus-1-3 \
+            libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 \
+            libxcb-render-util0 libxcb-shape0 libxcb-xkb1
+      - run: pip install -r requirements.txt -r requirements-dev.txt
+      - run: pip install -e .
+      - run: pytest
+
+  linux:
+    needs: test
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: System libraries and lintian
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lintian libegl1 libgl1 libglib2.0-0 libfontconfig1 libdbus-1-3 \
+            libxkbcommon-x11-0 libxcb-cursor0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 \
+            libxcb-render-util0 libxcb-shape0 libxcb-xkb1
+      - run: pip install -r requirements.txt pyinstaller
+      - run: pip install -e .
+      - run: pyinstaller packaging/markwise.spec --noconfirm
+      - name: Built app selftest
+        run: QT_QPA_PLATFORM=offscreen ./dist/MarkWise/MarkWise --selftest
+      - name: Build .deb
+        run: bash packaging/build_deb.sh "${GITHUB_REF_NAME#v}"
+      - name: Lint .deb (remove '|| true' once you have reviewed the warnings)
+        run: lintian --fail-on error dist/*.deb || true
+      - name: Clean-install test
+        run: |
+          for IMG in ubuntu:22.04 ubuntu:24.04 debian:12; do
+            docker run --rm -v "$PWD/dist:/pkg" $IMG bash -c '
+              set -e
+              apt-get update -qq && apt-get install -y /pkg/markwise_*.deb
+              QT_QPA_PLATFORM=offscreen markwise --selftest
+              apt-get remove -y markwise'
+          done
+      - run: tar -czf dist/MarkWise-linux-x64.tar.gz -C dist MarkWise
+      - uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: |
+            dist/*.deb
+            dist/MarkWise-linux-x64.tar.gz
+
+  windows:
+    needs: test
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt pyinstaller
+      - run: pip install -e .
+      - run: pyinstaller packaging/markwise.spec --noconfirm
+      - name: Built app selftest
+        shell: pwsh
+        run: |
+          $p = Start-Process dist\MarkWise\MarkWise.exe -ArgumentList "--selftest" -Wait -PassThru
+          if ($p.ExitCode -ne 0) { exit 1 }
+      - run: Compress-Archive -Path dist/MarkWise/* -DestinationPath MarkWise-windows-x64.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: MarkWise-windows-x64.zip
+
+  release:
+    needs: [linux, windows]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            *.deb
+            *.tar.gz
+            *.zip
