@@ -13,13 +13,11 @@ mkdir -p "$STAGE/usr/share/icons/hicolor/256x256/apps"
 
 cp -r dist/MarkWise/. "$APPDIR/"
 
-# Libraries do not need the execute bit (fixes: shared-library-is-executable)
+# Libraries do not need the execute bit (fixes lintian: shared-library-is-executable)
 find "$APPDIR" -type f \( -name '*.so' -o -name '*.so.*' \) -exec chmod 644 {} +
 
-# Remove debug symbols from libraries only, never from the MarkWise program itself
-# (fixes: unstripped-binary-or-object). Requires 'strip' from the binutils package.
-find "$APPDIR" -type f \( -name '*.so' -o -name '*.so.*' \) \
-  -exec strip --strip-unneeded {} \; 2>/dev/null || true
+# IMPORTANT: do NOT run 'strip' on the bundled libraries.
+# Stripping breaks NumPy's bundled OpenBLAS ("ELF load command address/offset not page-aligned").
 
 printf '#!/bin/sh\nexec /opt/markwise/MarkWise "$@"\n' > "$STAGE/usr/bin/markwise"
 chmod 755 "$STAGE/usr/bin/markwise"
@@ -29,7 +27,6 @@ install -m 644 packaging/deb/markwise.png "$STAGE/usr/share/icons/hicolor/256x25
 install -m 644 packaging/deb/copyright "$STAGE/usr/share/doc/$PKG/copyright"
 install -m 644 packaging/deb/lintian-overrides "$STAGE/usr/share/lintian/overrides/$PKG"
 
-# Changelog (fixes: no-changelog)
 sed "s/@VERSION@/$VERSION/" packaging/deb/changelog.in | gzip -9n -c > "$STAGE/usr/share/doc/$PKG/changelog.gz"
 chmod 644 "$STAGE/usr/share/doc/$PKG/changelog.gz"
 
