@@ -29,3 +29,6 @@ testpaths = ["tests"]
 
 [tool.ruff]
 src = ["src"]
+
+[tool.ruff.lint]
+ignore = ["BLE001", "TRY004"]
