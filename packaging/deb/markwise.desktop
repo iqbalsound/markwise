@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=MarkWise
+Comment=Assignment and quiz grading assistant
+Exec=markwise
+Icon=markwise
+Terminal=false
+Categories=Education;Office;
