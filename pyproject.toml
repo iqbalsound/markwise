@@ -20,5 +20,12 @@ version = { attr = "markwise.app_info.APP_VERSION" }
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+markwise = ["assets/themes/*.qss"]
+
 [tool.pytest.ini_options]
 pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+src = ["src"]
