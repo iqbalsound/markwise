@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "markwise"
+dynamic = ["version"]
+description = "Assignment and quiz grading assistant"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Iqbal Uddin Khan", email = "iqbalsound@yahoo.com" }]
+requires-python = ">=3.11"
+
+[project.urls]
+Homepage = "https://github.com/iqbalsound/markwise"
+
+[tool.setuptools.dynamic]
+version = { attr = "markwise.app_info.APP_VERSION" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]

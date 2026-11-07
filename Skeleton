@@ -1,0 +1,20 @@
+markwise/
+├── src/markwise/
+│   ├── app_info.py          # identity (Part 0)
+│   ├── __main__.py          # entry point, --selftest
+│   ├── app.py               # QApplication, themes, login flow
+│   ├── paths.py             # per-user data folder
+│   ├── db/                  # models.py, session.py
+│   ├── auth/                # passwords.py
+│   ├── services/            # importer.py, pdf_reader.py, grader.py, files.py, export.py
+│   ├── ui/                  # login, main_window, courses, assessments, students,
+│   │                        # grading, settings, about
+│   └── assets/themes/       # light.qss, dark.qss
+├── tests/ (fixtures/, unit/, integration/, ui/)
+├── packaging/
+│   ├── markwise.spec
+│   ├── build_deb.sh
+│   └── deb/ (control.in, markwise.desktop, markwise.png, copyright)
+├── .github/workflows/ (ci.yml, release.yml)
+├── pyproject.toml, requirements.txt, requirements-dev.txt
+├── LICENSE, README.md, .gitignore
