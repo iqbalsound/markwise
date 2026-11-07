@@ -1,5 +1,7 @@
 from PySide6.QtWidgets import QMessageBox
+
 from markwise import app_info as I
+
 
 def show_about(parent):
     QMessageBox.about(parent, f"About {I.APP_NAME}",

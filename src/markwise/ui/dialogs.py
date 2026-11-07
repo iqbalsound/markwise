@@ -2,8 +2,17 @@ from pathlib import Path
 
 from PySide6.QtCore import QSettings
 from PySide6.QtWidgets import (
-    QCheckBox, QComboBox, QDialog, QDialogButtonBox, QDoubleSpinBox, QFormLayout, QLabel,
-    QLineEdit, QPlainTextEdit, QSpinBox, QVBoxLayout,
+    QCheckBox,
+    QComboBox,
+    QDialog,
+    QDialogButtonBox,
+    QDoubleSpinBox,
+    QFormLayout,
+    QLabel,
+    QLineEdit,
+    QPlainTextEdit,
+    QSpinBox,
+    QVBoxLayout,
 )
 
 from markwise.services import keystore
@@ -141,7 +150,9 @@ class SettingsDialog(FormDialog):
 class PdfPreviewDialog(QDialog):
     def __init__(self, path, parent=None):
         super().__init__(parent)
-        from PySide6.QtPdf import QPdfDocument  # imported here so a missing Qt PDF module cannot stop the app
+        from PySide6.QtPdf import (
+            QPdfDocument,  # imported here so a missing Qt PDF module cannot stop the app
+        )
         from PySide6.QtPdfWidgets import QPdfView
 
         self.setWindowTitle(Path(path).name)

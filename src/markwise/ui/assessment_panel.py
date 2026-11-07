@@ -4,8 +4,17 @@ from pathlib import Path
 from PySide6.QtCore import QSettings, QThread, QUrl, Signal
 from PySide6.QtGui import QDesktopServices
 from PySide6.QtWidgets import (
-    QAbstractItemView, QFileDialog, QHBoxLayout, QLabel, QMessageBox, QProgressBar,
-    QPushButton, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget,
+    QAbstractItemView,
+    QFileDialog,
+    QHBoxLayout,
+    QLabel,
+    QMessageBox,
+    QProgressBar,
+    QPushButton,
+    QTableWidget,
+    QTableWidgetItem,
+    QVBoxLayout,
+    QWidget,
 )
 
 from markwise.db.models import Assessment, Grade, Student

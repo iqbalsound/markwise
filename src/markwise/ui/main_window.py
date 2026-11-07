@@ -1,8 +1,17 @@
 from PySide6.QtCore import QSettings, Qt
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import (
-    QApplication, QFileDialog, QInputDialog, QLabel, QLineEdit, QMainWindow, QMessageBox,
-    QSplitter, QStackedWidget, QTreeWidget, QTreeWidgetItem,
+    QApplication,
+    QFileDialog,
+    QInputDialog,
+    QLabel,
+    QLineEdit,
+    QMainWindow,
+    QMessageBox,
+    QSplitter,
+    QStackedWidget,
+    QTreeWidget,
+    QTreeWidgetItem,
 )
 
 from markwise import app_info as info
